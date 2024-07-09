@@ -9,8 +9,7 @@ namespace EmployeeManagementSystemApi.Core.Domain.Configurations
     {
         public void Configure(EntityTypeBuilder<Employee> builder)
         {
-            builder.HasIndex(i => i.Email).IsUnique();
-                
+            builder.HasIndex(i => i.Email).IsUnique();      
         }
     }
 }

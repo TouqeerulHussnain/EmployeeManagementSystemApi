@@ -17,6 +17,16 @@ namespace EmployeeManagementSystemApi.Core.Service.EmployeeService
            await repo.CreateOrUpdateEmployee(employee);
         }
 
+        public async Task DeleteEmployee(Guid id)
+        {
+           await repo.DeleteEmployee(id);
+        }
+
+        public async Task<Employee?> GetEmployeeById(Guid id)
+        {
+           return await repo.GetEmployeeById(id);
+        }
+
         public Task<List<Employee>> GetEmployees()
         {
             return repo.GetEmployees();

@@ -6,5 +6,7 @@ namespace EmployeeManagementSystemApi.Core.Service.EmployeeService
     {
         public Task<List<Employee>> GetEmployees();
         public Task CreateOrUpdateEmployee(Employee employee);
+        public  Task DeleteEmployee(Guid id);
+        public Task<Employee?> GetEmployeeById(Guid id);
     }
 }

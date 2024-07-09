@@ -20,6 +20,29 @@ namespace EmployeeManagementSystemApi.Core.Repository.EmployeeRepo
 
         }
 
+        public async Task DeleteEmployee(Guid id)
+        {
+            var employees = await context.Employees.ToListAsync();
+            var delEmployee = employees.Where(element => element.Id == id).First();
+            context.Employees.Remove(delEmployee!);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<Employee?> GetEmployeeById(Guid id)
+        {
+            var employees = await context.Employees.ToListAsync();
+            var availableEmployee = employees.Where(element => element.Id == id).FirstOrDefault();
+            if (availableEmployee != null)
+            {
+               return availableEmployee;
+
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public Task<List<Employee>> GetEmployees()
         {
             var employees = context.Employees.ToListAsync();

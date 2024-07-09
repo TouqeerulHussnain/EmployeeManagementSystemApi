@@ -23,11 +23,38 @@ namespace EmployeeManagementSystemApi.Controllers
         
         }
 
-        [HttpPost]
+        [HttpPost("CreateOrUpdateEmployee")]
         public async Task<IActionResult> CreateOrUpdateEmployee(Employee employee)
         {
             await service.CreateOrUpdateEmployee(employee);
             return Ok();
+        }
+        [HttpDelete("DeleteEmployee")]
+        public async Task<IActionResult> DeleteEmployee(Guid id)
+        {
+            var result = await service.GetEmployeeById(id);
+            if (result == null)
+            {
+                return BadRequest("Employee not Exits");
+            }
+            else
+            {
+                await service.DeleteEmployee(id);
+            }
+            return Ok(result);
+
+            
+        }
+        [HttpGet("GetEmployeeById")]
+        public async Task<IActionResult> GetEmployeeById(Guid id)
+        {
+
+            var result = await service.GetEmployeeById(id);
+            if(result == null)
+            {
+                return BadRequest("Employee not Exits");
+            }
+            return Ok(result);
         }
     }
 }
