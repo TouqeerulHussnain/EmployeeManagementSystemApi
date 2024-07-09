@@ -5,5 +5,6 @@ namespace EmployeeManagementSystemApi.Core.Service.EmployeeService
     public interface IEmployeeService
     {
         public Task<List<Employee>> GetEmployees();
+        public Task CreateOrUpdateEmployee(Employee employee);
     }
 }

@@ -11,6 +11,12 @@ namespace EmployeeManagementSystemApi.Core.Service.EmployeeService
         {
             this.repo = repo;
         }
+
+        public async Task CreateOrUpdateEmployee(Employee employee)
+        {
+           await repo.CreateOrUpdateEmployee(employee);
+        }
+
         public Task<List<Employee>> GetEmployees()
         {
             return repo.GetEmployees();

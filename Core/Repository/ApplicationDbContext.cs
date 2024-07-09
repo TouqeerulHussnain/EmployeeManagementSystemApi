@@ -10,5 +10,6 @@ namespace EmployeeManagementSystemApi.Core.Repository
             
         }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Attendance>? Attendances { get; set; }
     }
 }

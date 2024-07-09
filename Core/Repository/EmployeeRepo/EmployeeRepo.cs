@@ -11,6 +11,15 @@ namespace EmployeeManagementSystemApi.Core.Repository.EmployeeRepo
         {
             this.context = context;
         }
+
+        public async Task CreateOrUpdateEmployee(Employee employee)
+        {
+            var employees = context.Employees;
+            await employees.AddAsync(employee);
+            await context.SaveChangesAsync();
+
+        }
+
         public Task<List<Employee>> GetEmployees()
         {
             var employees = context.Employees.ToListAsync();
