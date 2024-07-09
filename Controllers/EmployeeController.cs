@@ -29,6 +29,13 @@ namespace EmployeeManagementSystemApi.Controllers
             await service.CreateOrUpdateEmployee(employee);
             return Ok();
         }
+
+        [HttpPut("UpdateEmployee")]
+        public async Task<IActionResult> UpdateEmployee(Employee employee)
+        {
+            await service.Update(employee);
+            return Ok();
+        }
         [HttpDelete("DeleteEmployee")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {

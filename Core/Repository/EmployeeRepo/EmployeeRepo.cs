@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystemApi.Core.Repository.EmployeeRepo
 {
+
     public class EmployeeRepo : IEmployeeRepo
     {
         private readonly ApplicationDbContext context;
@@ -17,7 +18,6 @@ namespace EmployeeManagementSystemApi.Core.Repository.EmployeeRepo
             var employees = context.Employees;
             await employees.AddAsync(employee);
             await context.SaveChangesAsync();
-
         }
 
         public async Task DeleteEmployee(Guid id)
@@ -47,6 +47,21 @@ namespace EmployeeManagementSystemApi.Core.Repository.EmployeeRepo
         {
             var employees = context.Employees.ToListAsync();
             return employees;
+        }
+
+        public async Task Update(Employee employee)
+        {
+            var employees = await context.Employees.AsNoTracking().ToListAsync();
+            var availableEmployee = employees.Where(element => element.Id == employee.Id).FirstOrDefault();
+            if (availableEmployee != null)
+            {
+                context.Employees.Update(employee);
+
+            }
+            else
+            {
+            }
+            await context.SaveChangesAsync();
         }
     }
 }

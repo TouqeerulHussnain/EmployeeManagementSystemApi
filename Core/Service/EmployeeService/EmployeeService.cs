@@ -31,5 +31,10 @@ namespace EmployeeManagementSystemApi.Core.Service.EmployeeService
         {
             return repo.GetEmployees();
         }
+
+        public async Task Update(Employee employee)
+        {
+            await repo.Update(employee);
+        }
     }
 }
