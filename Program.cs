@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddFluentValidation(c => c.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()));
 builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
-builder.Services.AddScoped<IAttendanceRepo, IAttendanceRepo>();
+builder.Services.AddScoped<IAttendanceRepo, AttendanceRepo>();
 builder.Services.AddScoped<IEmployeeService , EmployeeService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
