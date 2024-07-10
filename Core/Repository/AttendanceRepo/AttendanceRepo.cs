@@ -48,6 +48,7 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
             var empAttendance = list.Where(e => e.EmployeeId == employeeId && e.Date == forDate.Date).FirstOrDefault();
             if (empAttendance != null)
             {
+
                 empAttendance.CheckOutTime = checkOutTime;
                 context.Attendances.Update(empAttendance);
             }
@@ -127,7 +128,7 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
                                join a in context.Attendances on e.Id equals a.EmployeeId
                                into attendances
                                from a in attendances.DefaultIfEmpty()
-                               where a == null || a.Date == datetime
+                               where a == null || a.Date == datetime || e.Attendance==null
                                select new Report
                                {
                                    EmployeeId = e.Id,

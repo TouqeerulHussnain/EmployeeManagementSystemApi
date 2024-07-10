@@ -51,33 +51,34 @@ namespace EmployeeManagementSystemApi.Controllers
         {
 
             DateTime AttendanceDate = forDate ?? DateTime.Now.Date;
-            bool attendanceAvailable = await service.IsAttendanceAvailable(empId, AttendanceDate);
-            if (attendanceAvailable)
-            {
-                bool alreadyCheckIn = await service.IsCheckInAvailable(empId, AttendanceDate);
-                if (alreadyCheckIn)
-                {
-                    bool isCheckOutAlready = await service.IsCheckOutAvailable(empId, AttendanceDate);
-                    if (isCheckOutAlready)
-                    {
-                        return BadRequest("You already Checkout");
-                    }
-                    else
-                    {
+            await service.CheckOut(empId, checkOutTime, forDate);
+            //bool attendanceAvailable = await service.IsAttendanceAvailable(empId, AttendanceDate);
+            //if (attendanceAvailable)
+            //{
+            //    bool alreadyCheckIn = await service.IsCheckInAvailable(empId, AttendanceDate);
+            //    if (alreadyCheckIn)
+            //    {
+            //        bool isCheckOutAlready = await service.IsCheckOutAvailable(empId, AttendanceDate);
+            //        if (isCheckOutAlready)
+            //        {
+            //            return BadRequest("You already Checkout");
+            //        }
+            //        else
+            //        {
 
-                        await service.CheckOut(empId, checkOutTime, forDate);
-                    }
-                }
-                else
-                {
-                    return BadRequest("You have to check in first");
-                }
+            //            await service.CheckOut(empId, checkOutTime, forDate);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        return BadRequest("You have to check in first");
+            //    }
 
-            }
-            else
-            {
-                return BadRequest("You have to check in first");
-            }
+            //}
+            //else
+            //{
+            //    return BadRequest("You have to check in first for this date");
+            //}
 
             return Ok();
         }

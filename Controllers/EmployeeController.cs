@@ -1,6 +1,5 @@
 ﻿using EmployeeManagementSystemApi.Core.Domain.Model;
 using EmployeeManagementSystemApi.Core.Service.EmployeeService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagementSystemApi.Controllers
@@ -16,11 +15,12 @@ namespace EmployeeManagementSystemApi.Controllers
             this.service = service;
         }
         [HttpGet("GetEmployees")]
-        public async Task<IActionResult> GetEmployees() { 
-        
-            var employees= await service.GetEmployees();
+        public async Task<IActionResult> GetEmployees()
+        {
+
+            var employees = await service.GetEmployees();
             return Ok(employees);
-        
+
         }
 
         [HttpPost("CreateOrUpdateEmployee")]
@@ -50,14 +50,14 @@ namespace EmployeeManagementSystemApi.Controllers
             }
             return Ok(result);
 
-            
+
         }
         [HttpGet("GetEmployeeById")]
         public async Task<IActionResult> GetEmployeeById(Guid id)
         {
 
             var result = await service.GetEmployeeById(id);
-            if(result == null)
+            if (result == null)
             {
                 return BadRequest("Employee not Exits");
             }
