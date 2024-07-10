@@ -17,17 +17,79 @@ namespace EmployeeManagementSystemApi.Controllers
 
 
         [HttpPost("CheckIn")]
-        public async Task<IActionResult> CheckIn(Guid empId, DateTime checkInTime)
+        public async Task<IActionResult> CheckIn(Guid empId, DateTime checkInTime, DateTime? forDate)
         {
-            await service.CheckIn (empId, checkInTime);
+
+            DateTime AttendanceDate = forDate ?? DateTime.Now.Date;
+            bool attendanceAvailable = await service.IsAttendanceAvailable(empId, AttendanceDate);
+            if (attendanceAvailable)
+            {
+                bool alreadyCheckIn = await service.IsCheckInAvailable(empId, checkInTime);
+                if (alreadyCheckIn)
+                {
+                    return BadRequest("You already Checked In for this date");
+                }
+                else
+                {
+                    await service.CheckIn(empId, checkInTime, forDate);
+                }
+
+            }
+            else
+            {
+                await service.CheckIn(empId, checkInTime, forDate);
+            }
+
             return Ok();
         }
+
+        [HttpPost("CheckOut")]
+        public async Task<IActionResult> CheckOut(Guid empId, DateTime checkOutTime, DateTime? forDate)
+        {
+
+            DateTime AttendanceDate = forDate ?? DateTime.Now.Date;
+            bool attendanceAvailable = await service.IsAttendanceAvailable(empId, AttendanceDate);
+            if (attendanceAvailable)
+            {
+                bool alreadyCheckIn = await service.IsCheckInAvailable(empId, AttendanceDate);
+                if (alreadyCheckIn)
+                {
+                    bool isCheckOutAlready = await service.IsCheckOutAvailable(empId, AttendanceDate);
+                    if (isCheckOutAlready) {
+                        return BadRequest("You already Checkout");
+                    } else {
+
+                        await service.CheckOut(empId, checkOutTime, forDate);
+                    }
+                }
+                else
+                {
+                    return BadRequest("You have to check in first");
+                }
+
+            }
+            else
+            {
+                return BadRequest("You have to check in first");
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("ManualAttendance")]
+        public async Task<IActionResult> ManualAttendance(Guid empId,DateTime date, DateTime checkInTime)
+        {
+            await service.AddAttendanceManually(empId,  checkInTime, date);
+            return Ok();
+        }
+
         [HttpGet("GetAttendance")]
         public async Task<IActionResult> GetAttendance()
         {
             var attendance= await service.GetAttendance();
             return Ok(attendance);
         }
+
         [HttpGet("GetAttendanceByDate")]
         public async Task<IActionResult> GetAttendanceByDate(DateTime dateTime)
         {

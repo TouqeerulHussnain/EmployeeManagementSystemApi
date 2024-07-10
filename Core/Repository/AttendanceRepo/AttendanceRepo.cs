@@ -1,6 +1,7 @@
 ﻿
 using EmployeeManagementSystemApi.Core.Domain.Model;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
 {
@@ -12,23 +13,45 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
         {
             this.context = context;
         }
-        public async Task CheckIn(Guid employeeId, DateTime dateTime)
-        {
 
+        public async Task AddAttendanceManually(Guid employeeId, DateTime checkInTime, DateTime date)
+        {
             Attendance attendance = new Attendance
             {
-                Date= DateTime.Now.Date,
+                Date = date.Date,
                 EmployeeId = employeeId,
-                CheckInTime = dateTime,
+                CheckInTime = checkInTime,
             };
             await context.Attendances.AddAsync(attendance);
             await context.SaveChangesAsync();
 
         }
 
-        public Task CheckOut(Guid employeeId, DateTime dateTime)
+        public async Task CheckIn(Guid employeeId, DateTime checkInTime, DateTime? date)
         {
-            throw new NotImplementedException();
+            DateTime currentDate = date ?? DateTime.Now.Date;
+
+            Attendance attendance = new Attendance
+            {
+                Date= currentDate,
+                EmployeeId = employeeId,
+                CheckInTime = checkInTime,
+            };
+            await context.Attendances.AddAsync(attendance);
+            await context.SaveChangesAsync();
+
+        }
+
+        public async Task CheckOut(Guid employeeId, DateTime checkOutTime, DateTime? date)
+        {
+            DateTime forDate = date ?? DateTime.Now.Date;
+            var list = await context.Attendances.AsNoTracking().ToListAsync();
+            var empAttendance = list.Where(e => e.EmployeeId == employeeId && e.Date == forDate).FirstOrDefault();
+            if (empAttendance != null) {
+                empAttendance.CheckOutTime = checkOutTime;
+                context.Attendances.Update(empAttendance);
+            }
+            await context.SaveChangesAsync();
         }
 
         public async Task<List<Attendance>> GetAttendance()
@@ -61,6 +84,49 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
                         };
             query.ToList();
 
+        }
+
+        public async Task<bool> IsAttendanceAvailable(Guid employeeId, DateTime AttendanceDate)
+        {
+            var attendance = await context.Attendances.AsNoTracking().ToListAsync();
+            var val = attendance.Where(e => e.EmployeeId == employeeId && e.Date == AttendanceDate).FirstOrDefault();
+
+            if (val != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public async Task<bool> IsCheckInAvailable(Guid employeeId, DateTime AttendanceDate)
+        {
+            var attendance = await context.Attendances.AsNoTracking().ToListAsync();
+            var val = attendance.Where(e => e.EmployeeId == employeeId && e.Date == AttendanceDate).FirstOrDefault();
+
+            if (val.CheckInTime != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public async Task<bool> IsCheckOutAvailable(Guid employeeId, DateTime AttendanceDate)
+        {
+            var attendance = await context.Attendances.AsNoTracking().ToListAsync();
+            var val = attendance.Where(e => e.EmployeeId == employeeId && e.Date == AttendanceDate).FirstOrDefault();
+
+            if (val.CheckOutTime != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
