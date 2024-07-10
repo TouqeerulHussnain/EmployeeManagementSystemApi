@@ -1,4 +1,6 @@
 ﻿
+using EmployeeManagementSystemApi.Core.Domain.Model;
+
 namespace EmployeeManagementSystemApi.Core.Service.Attendance
 {
     public interface IAttendanceService
@@ -13,5 +15,10 @@ namespace EmployeeManagementSystemApi.Core.Service.Attendance
         
         public Task<bool> IsCheckInAvailable(Guid employeeId, DateTime checkInTime);
         public  Task<bool> IsCheckOutAvailable(Guid employeeId, DateTime AttendanceDate);
+        public Task<Domain.Model.Attendance?> Attendance(Guid ofEmployee, DateTime ofDate);
+
+        public Task<List<Domain.Model.Attendance>> GetAttendanceRange(DateTime start, DateTime end);
+
+        public Task<List<Report>> GetAttendanceReportByDate(DateTime datetime);
     }
 }

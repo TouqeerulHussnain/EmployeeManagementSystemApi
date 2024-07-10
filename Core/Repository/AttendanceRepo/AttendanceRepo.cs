@@ -29,11 +29,10 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
 
         public async Task CheckIn(Guid employeeId, DateTime checkInTime, DateTime? date)
         {
-            DateTime currentDate = date ?? DateTime.Now.Date;
-
+            DateTime currentDate = date ?? DateTime.Now;
             Attendance attendance = new Attendance
             {
-                Date= currentDate,
+                Date = currentDate.Date,
                 EmployeeId = employeeId,
                 CheckInTime = checkInTime,
             };
@@ -46,8 +45,9 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
         {
             DateTime forDate = date ?? DateTime.Now.Date;
             var list = await context.Attendances.AsNoTracking().ToListAsync();
-            var empAttendance = list.Where(e => e.EmployeeId == employeeId && e.Date == forDate).FirstOrDefault();
-            if (empAttendance != null) {
+            var empAttendance = list.Where(e => e.EmployeeId == employeeId && e.Date == forDate.Date).FirstOrDefault();
+            if (empAttendance != null)
+            {
                 empAttendance.CheckOutTime = checkOutTime;
                 context.Attendances.Update(empAttendance);
             }
@@ -59,31 +59,23 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
             return await context.Attendances.ToListAsync();
         }
 
+        public async Task<List<Attendance>> GetAttendanceRange(DateTime start, DateTime end)
+        {
+            var list = await context.Attendances.Where(e => e.Date >= start && e.Date <= end).ToListAsync();
+            return list;
+        }
+
         public async Task<List<Attendance>> GetAttendanceByDate(DateTime datetime)
         {
             var attendance = await context.Attendances.Where(element => element.Date == datetime).ToListAsync();
-
-            var query = from Attendance in context.Attendances
-                        join employee in context.Employees on Attendance.EmployeeId equals employee.Id
-                        select new
-                        {
-                            AttendanceId = Attendance.Id,
-                            EmployeeName = employee.Name,
-                        };
             return attendance;
 
         }
-        public async Task GetAttendanceJoined(DateTime datetime)
+        public async Task<Attendance?> Attendance(Guid ofEmployee, DateTime ofDate)
         {
-            var query = from Attendance in context.Attendances
-                        join employee in context.Employees on Attendance.EmployeeId equals employee.Id
-                        select new
-                        {
-                            AttendanceId = Attendance,
-                            EmployeeName = employee,
-                        };
-            query.ToList();
-
+            var attendance = await context.Attendances.AsNoTracking().ToListAsync();
+            var val = attendance.Where(e => e.EmployeeId == ofEmployee && e.Date == ofDate).FirstOrDefault();
+            return val;
         }
 
         public async Task<bool> IsAttendanceAvailable(Guid employeeId, DateTime AttendanceDate)
@@ -127,6 +119,26 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
             {
                 return false;
             }
+        }
+
+        public async Task<List<Report>> GetAttendanceReportByDate(DateTime datetime)
+        {
+            var query = await (from e in context.Employees
+                               join a in context.Attendances on e.Id equals a.EmployeeId
+                               into attendances
+                               from a in attendances.DefaultIfEmpty()
+                               where a == null || a.Date == datetime
+                               select new Report
+                               {
+                                   EmployeeId = e.Id,
+                                   Name = e.Name,
+                                   AttendanceDate = a.Date,
+                                   CheckInTime = a.CheckInTime,
+                                   CheckOutTime = a.CheckOutTime
+                               }).ToListAsync();
+
+
+            return query;
         }
     }
 }

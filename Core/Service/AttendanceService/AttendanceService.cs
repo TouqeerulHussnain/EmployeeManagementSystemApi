@@ -1,5 +1,6 @@
 ﻿
 
+using EmployeeManagementSystemApi.Core.Domain.Model;
 using EmployeeManagementSystemApi.Core.Repository.AttendanceRepo;
 
 namespace EmployeeManagementSystemApi.Core.Service.Attendance
@@ -16,6 +17,12 @@ namespace EmployeeManagementSystemApi.Core.Service.Attendance
         public async Task AddAttendanceManually(Guid employeeId, DateTime checkInTime, DateTime date)
         {
             await repo.AddAttendanceManually(employeeId, checkInTime, date);
+        }
+
+        public async Task<Domain.Model.Attendance?> Attendance(Guid ofEmployee, DateTime ofDate)
+        {
+            var attendance = await repo.Attendance(ofEmployee, ofDate);
+            return attendance;
         }
 
         public async Task CheckIn(Guid employeeId, DateTime checkInTime, DateTime? date)
@@ -37,6 +44,18 @@ namespace EmployeeManagementSystemApi.Core.Service.Attendance
         {
             var attendence = await repo.GetAttendanceByDate(datetime);
             return attendence;
+        }
+
+        public async Task<List<Domain.Model.Attendance>> GetAttendanceRange(DateTime start, DateTime end)
+        {
+            var list = await repo.GetAttendanceRange(start, end);
+            return list;
+        }
+
+        public async Task<List<Report>> GetAttendanceReportByDate(DateTime datetime)
+        {
+            var list = await repo.GetAttendanceReportByDate (datetime);
+            return list;
         }
 
         public async Task<bool> IsAttendanceAvailable(Guid employeeId, DateTime dateTime)
