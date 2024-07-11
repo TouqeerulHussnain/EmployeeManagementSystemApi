@@ -49,16 +49,12 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
                 attendance.CheckOutTime = checkOutTime;
                 context.Attendances.Update(attendance);
                 await context.SaveChangesAsync();
-                return attendance;
+                
             }
             
             return attendance;
         }
 
-        public async Task<List<Attendance>> GetAttendance()
-        {
-            return await context.Attendances.ToListAsync();
-        }
 
         public async Task<List<Attendance>> GetAttendanceRange(DateTime start, DateTime end)
         {
@@ -66,12 +62,6 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
             return list;
         }
 
-        public async Task<List<Attendance>> GetAttendanceByDate(DateTime datetime)
-        {
-            var attendance = await context.Attendances.Where(element => element.Date == datetime).ToListAsync();
-            return attendance;
-
-        }
         public async Task<Attendance?> Attendance(Guid ofEmployee, DateTime ofDate)
         {
             var attendance = await context.Attendances.AsNoTracking().ToListAsync();

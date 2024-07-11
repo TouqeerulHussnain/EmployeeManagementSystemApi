@@ -45,6 +45,7 @@ namespace EmployeeManagementSystemApi.Controllers
             else if(attendance != null && attendance.CheckOutTime != null)
             {
                 return BadRequest("Already Checked out");
+      
             }
             else
             {
@@ -66,22 +67,12 @@ namespace EmployeeManagementSystemApi.Controllers
 
 
 
-        [HttpGet("GetAttendance")]
-        public async Task<IActionResult> GetAttendance()
-        {
-            var attendance = await service.GetAttendance();
-            return Ok(attendance);
-        }
+        
 
 
 
 
-        [HttpGet("GetAttendanceByDate")]
-        public async Task<IActionResult> GetAttendanceByDate(DateTime dateTime)
-        {
-            var attendance = await service.GetAttendanceByDate(dateTime);
-            return Ok(attendance);
-        }
+        
 
 
 

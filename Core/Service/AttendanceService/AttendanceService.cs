@@ -35,16 +35,7 @@ namespace EmployeeManagementSystemApi.Core.Service.Attendance
             return await repo.CheckOut(employeeId,checkOutTime);
         }
 
-        public async Task<List<Domain.Model.Attendance>> GetAttendance()
-        {
-            return await repo.GetAttendance();
-        }
-
-        public async Task<List<Domain.Model.Attendance>> GetAttendanceByDate(DateTime datetime)
-        {
-            var attendence = await repo.GetAttendanceByDate(datetime);
-            return attendence;
-        }
+        
 
         public async Task<List<Domain.Model.Attendance>> GetAttendanceRange(DateTime start, DateTime end)
         {
