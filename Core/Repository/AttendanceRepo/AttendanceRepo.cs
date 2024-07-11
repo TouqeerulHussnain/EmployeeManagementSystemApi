@@ -27,31 +27,32 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
 
         }
 
-        public async Task CheckIn(Guid employeeId, DateTime checkInTime, DateTime? date)
+        public async Task<Attendance> CheckIn(Guid employeeId, DateTime checkInTime)
         {
-            DateTime currentDate = date ?? DateTime.Now;
             Attendance attendance = new Attendance
             {
-                Date = currentDate.Date,
+                Date = DateTime.Now.Date,
                 EmployeeId = employeeId,
                 CheckInTime = checkInTime,
             };
             await context.Attendances.AddAsync(attendance);
             await context.SaveChangesAsync();
-
+            return attendance;
         }
 
-        public async Task CheckOut(Guid employeeId, DateTime checkOutTime, DateTime? date)
+        public async Task<Attendance> CheckOut(Guid employeeId, DateTime checkOutTime)
         {
-            DateTime forDate = date ?? DateTime.Now.Date;
             var list = await context.Attendances.AsNoTracking().ToListAsync();
-            var empAttendance = list.Where(e => e.EmployeeId == employeeId && e.Date == forDate.Date).FirstOrDefault();
-            if (empAttendance != null)
+            var attendance = list.Where(e => e.EmployeeId == employeeId && e.Date == DateTime.Now.Date).FirstOrDefault();
+            if (attendance != null)
             {
-                empAttendance.CheckOutTime = checkOutTime;
-                context.Attendances.Update(empAttendance);
+                attendance.CheckOutTime = checkOutTime;
+                context.Attendances.Update(attendance);
+                await context.SaveChangesAsync();
+                return attendance;
             }
-            await context.SaveChangesAsync();
+            
+            return attendance;
         }
 
         public async Task<List<Attendance>> GetAttendance()
@@ -78,48 +79,6 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
             return val;
         }
 
-        public async Task<bool> IsAttendanceAvailable(Guid employeeId, DateTime AttendanceDate)
-        {
-            var attendance = await context.Attendances.AsNoTracking().ToListAsync();
-            var val = attendance.Where(e => e.EmployeeId == employeeId && e.Date == AttendanceDate).FirstOrDefault();
-
-            if (val != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public async Task<bool> IsCheckInAvailable(Guid employeeId, DateTime AttendanceDate)
-        {
-            var attendance = await context.Attendances.AsNoTracking().ToListAsync();
-            var val = attendance.Where(e => e.EmployeeId == employeeId && e.Date == AttendanceDate).FirstOrDefault();
-
-            if (val.CheckInTime != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public async Task<bool> IsCheckOutAvailable(Guid employeeId, DateTime AttendanceDate)
-        {
-            var attendance = await context.Attendances.AsNoTracking().ToListAsync();
-            var val = attendance.Where(e => e.EmployeeId == employeeId && e.Date == AttendanceDate).FirstOrDefault();
-
-            if (val.CheckOutTime != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
         public async Task<List<Report>> GetAttendanceReportByDate(DateTime datetime)
         {

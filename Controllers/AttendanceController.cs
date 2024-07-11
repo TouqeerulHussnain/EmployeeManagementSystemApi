@@ -19,86 +19,42 @@ namespace EmployeeManagementSystemApi.Controllers
 
 
         [HttpPost("CheckIn")]
-        public async Task<IActionResult> CheckIn(Guid empId, DateTime checkInTime, DateTime? forDate)
+        public async Task<IActionResult> CheckIn(Guid empId, DateTime checkInTime)
         {
 
-            DateTime AttendanceDate = forDate ?? DateTime.Now.Date;
-
-
-            bool attendanceAvailable = await service.IsAttendanceAvailable(empId, AttendanceDate);
-            if (attendanceAvailable)
+            try
             {
-                bool alreadyCheckIn = await service.IsCheckInAvailable(empId, checkInTime);
-                if (alreadyCheckIn)
-                {
-                    return BadRequest("You already Checked In for this date");
-                }
-                else
-                {
-                    await service.CheckIn(empId, checkInTime, forDate);
-                }
-
+                Attendance checkIn = await service.CheckIn(empId, checkInTime);
+                return Ok(checkIn);
             }
-            else
-            {
-                await service.CheckIn(empId, checkInTime, forDate);
+            catch (Exception e) {
+                return BadRequest("Already Checked In");
             }
-
-            return Ok();
         }
 
         [HttpPost("CheckOut")]
-        public async Task<IActionResult> CheckOut(Guid empId, DateTime checkOutTime, DateTime? forDate)
+        public async Task<IActionResult> CheckOut(Guid empId, DateTime checkOutTime)
         {
 
-            DateTime AttendanceDate = forDate ?? DateTime.Now.Date;
-            
-            Attendance? attendance = await service.Attendance(empId, AttendanceDate);
-            if (attendance != null) {
-                if (attendance.CheckInTime == null)
-                {
-                    return BadRequest("Please check in first");
-                }
-                else
-                {
-                    await service.CheckOut(empId, checkOutTime, forDate);
-                }
+            Attendance? attendance = await service.Attendance(empId, DateTime.Now.Date);
+            if (attendance != null && attendance.CheckOutTime == null) 
+            { 
+                Attendance checkout=  await service.CheckOut(empId, checkOutTime);
+                return Ok(checkout);
+            }
+            else if(attendance != null && attendance.CheckOutTime != null)
+            {
+                return BadRequest("Already Checked out");
             }
             else
             {
                 return BadRequest("Please check in first");
             }
 
-            //bool attendanceAvailable = await service.IsAttendanceAvailable(empId, AttendanceDate);
-            //if (attendanceAvailable)
-            //{
-            //    bool alreadyCheckIn = await service.IsCheckInAvailable(empId, AttendanceDate);
-            //    if (alreadyCheckIn)
-            //    {
-            //        bool isCheckOutAlready = await service.IsCheckOutAvailable(empId, AttendanceDate);
-            //        if (isCheckOutAlready)
-            //        {
-            //            return BadRequest("You already Checkout");
-            //        }
-            //        else
-            //        {
-
-            //            await service.CheckOut(empId, checkOutTime, forDate);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        return BadRequest("You have to check in first");
-            //    }
-
-            //}
-            //else
-            //{
-            //    return BadRequest("You have to check in first for this date");
-            //}
-
-            return Ok();
         }
+
+
+
 
         [HttpPost("AddAttendanceManually")]
         public async Task<IActionResult> AddAttendanceManually(Guid empId, DateTime date, DateTime checkInTime)
@@ -107,12 +63,18 @@ namespace EmployeeManagementSystemApi.Controllers
             return Ok();
         }
 
+
+
+
         [HttpGet("GetAttendance")]
         public async Task<IActionResult> GetAttendance()
         {
             var attendance = await service.GetAttendance();
             return Ok(attendance);
         }
+
+
+
 
         [HttpGet("GetAttendanceByDate")]
         public async Task<IActionResult> GetAttendanceByDate(DateTime dateTime)
@@ -121,6 +83,9 @@ namespace EmployeeManagementSystemApi.Controllers
             return Ok(attendance);
         }
 
+
+
+
         [HttpGet("GetAttendanceReportByDate")]
         public async Task<IActionResult> GetAttendanceReportByDate(DateTime dateTime)
         {
@@ -128,13 +93,15 @@ namespace EmployeeManagementSystemApi.Controllers
             return Ok(attendance);
         }
 
+
+
+
         [HttpGet("GetAttendanceFrom")]
         public async Task<IActionResult> GetAttendanceFrom(DateTime start, DateTime end)
         {
             var list = await service.GetAttendanceRange(start, end);
             return Ok(list);
-
-    }
+        }
     }
 
     

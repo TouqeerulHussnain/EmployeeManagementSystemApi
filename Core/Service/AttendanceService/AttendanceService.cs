@@ -25,14 +25,14 @@ namespace EmployeeManagementSystemApi.Core.Service.Attendance
             return attendance;
         }
 
-        public async Task CheckIn(Guid employeeId, DateTime checkInTime, DateTime? date)
+        public async Task<Domain.Model.Attendance> CheckIn(Guid employeeId, DateTime checkInTime)
         {
-            await repo.CheckIn(employeeId,checkInTime,date);
+            return await repo.CheckIn(employeeId,checkInTime);
         }
 
-        public async Task CheckOut(Guid employeeId, DateTime checkOutTime, DateTime? date)
+        public async Task<Domain.Model.Attendance> CheckOut(Guid employeeId, DateTime checkOutTime)
         {
-            await repo.CheckOut(employeeId,checkOutTime,date);
+            return await repo.CheckOut(employeeId,checkOutTime);
         }
 
         public async Task<List<Domain.Model.Attendance>> GetAttendance()
@@ -58,22 +58,6 @@ namespace EmployeeManagementSystemApi.Core.Service.Attendance
             return list;
         }
 
-        public async Task<bool> IsAttendanceAvailable(Guid employeeId, DateTime dateTime)
-        {
-           bool val =  await repo.IsAttendanceAvailable( employeeId, dateTime);
-            return val;
-        }
-        
-        public async Task<bool> IsCheckInAvailable(Guid employeeId, DateTime checkInTime)
-        {
-            bool val = await repo.IsCheckInAvailable( employeeId, checkInTime);
-            return val;
-        }
-
-        public async Task<bool> IsCheckOutAvailable(Guid employeeId, DateTime AttendanceDate)
-        {
-            bool val = await repo.IsCheckOutAvailable( employeeId, AttendanceDate);
-            return val;
-        }
+       
     }
 }
