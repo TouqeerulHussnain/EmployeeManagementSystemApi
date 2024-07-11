@@ -127,7 +127,7 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
                                join a in context.Attendances on e.Id equals a.EmployeeId
                                into attendances
                                from a in attendances.DefaultIfEmpty()
-                               where a == null || a.Date == datetime || e.Attendance==null
+                               where a == null || a.Date == datetime.Date || e.Attendance==null
                                select new Report
                                {
                                    EmployeeId = e.Id,
