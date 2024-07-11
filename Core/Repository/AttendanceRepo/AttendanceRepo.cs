@@ -48,7 +48,6 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
             var empAttendance = list.Where(e => e.EmployeeId == employeeId && e.Date == forDate.Date).FirstOrDefault();
             if (empAttendance != null)
             {
-
                 empAttendance.CheckOutTime = checkOutTime;
                 context.Attendances.Update(empAttendance);
             }
@@ -75,7 +74,7 @@ namespace EmployeeManagementSystemApi.Core.Repository.AttendanceRepo
         public async Task<Attendance?> Attendance(Guid ofEmployee, DateTime ofDate)
         {
             var attendance = await context.Attendances.AsNoTracking().ToListAsync();
-            var val = attendance.Where(e => e.EmployeeId == ofEmployee && e.Date == ofDate).FirstOrDefault();
+            var val = attendance.Where(e => e.EmployeeId == ofEmployee && e.Date == ofDate.Date).FirstOrDefault();
             return val;
         }
 

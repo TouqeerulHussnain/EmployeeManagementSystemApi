@@ -1,4 +1,5 @@
-﻿using EmployeeManagementSystemApi.Core.Service.Attendance;
+﻿using EmployeeManagementSystemApi.Core.Domain.Model;
+using EmployeeManagementSystemApi.Core.Service.Attendance;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.ConstrainedExecution;
@@ -51,7 +52,23 @@ namespace EmployeeManagementSystemApi.Controllers
         {
 
             DateTime AttendanceDate = forDate ?? DateTime.Now.Date;
-            await service.CheckOut(empId, checkOutTime, forDate);
+            
+            Attendance? attendance = await service.Attendance(empId, AttendanceDate);
+            if (attendance != null) {
+                if (attendance.CheckInTime == null)
+                {
+                    return BadRequest("Please check in first");
+                }
+                else
+                {
+                    await service.CheckOut(empId, checkOutTime, forDate);
+                }
+            }
+            else
+            {
+                return BadRequest("Please check in first");
+            }
+
             //bool attendanceAvailable = await service.IsAttendanceAvailable(empId, AttendanceDate);
             //if (attendanceAvailable)
             //{
